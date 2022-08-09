@@ -2,7 +2,7 @@ from tkinter import *
 import math
 import datetime
 
-list_dni = ["Понедельникъ","Вторникъ", "Третейникъ", "Четверикъ", "Пятница", "Шестица", "Седьмица", "Осьмица", "Неделя"]
+list_dni = ["Понедельникъ", "Вторникъ", "Третейникъ", "Четверикъ", "Пятница", "Шестица", "Седьмица", "Осьмица", "Неделя"]
 list_mes = ["Рамхатъ", "Айлѣтъ", "Бейлѣтъ", "Гэйлѣтъ", "Дайлѣтъ", "Элѣтъ", "Вэйлѣтъ", "Хейлѣтъ", "Тайлѣтъ"]
 
 
@@ -32,12 +32,7 @@ second_arrow = canvas.create_line(0, 0, 0, 0, fill="red")
 minute_arrow = canvas.create_line(0, 0, 0, 0, fill="green")
 hour_arrow = canvas.create_line(0, 0, 0, 0, )
 
-hour_text = Label(text="Часы: ", font=('Times',15))
-hour_text.place(x = width-450, y = width - 150)
-minute_text = Label(text="Части: ", font=('Times',15))
-minute_text.place(x = width-350, y = width - 150)
-second_text = Label(text="Доли: ", font=('Times',15))
-second_text.place(x = width-250, y = width - 150)
+
 
 
 def change_hand(len, time, clock_hand, degree):
@@ -48,6 +43,26 @@ def change_hand(len, time, clock_hand, degree):
     y2 = y_cord(len, alph)
     canvas.coords(clock_hand, x1, y1, x2, y2)
 
+def change_day():
+    global i
+    i+=1
+    if i == 9:
+        i = 0
+    day_text.config(text = 'День: ' + list_dni[i])
+
+def change_mec():
+    global count_mes
+    k = count_mes - 1
+    if k == 9:
+        count_mes = 1
+        year += 1
+
+    mouth_text.config(text = 'Сороковник: ' + list_mes[k])
+    count_mes +=1
+
+
+
+
 
 def update():
     # nowq = datetime.datetime.now().microsecond
@@ -57,6 +72,7 @@ def update():
     global second  # = (time.second * 1000 + time.microsecond / 1000) / 28.9
     global year
     global n
+    global count_day
     second += 16  # 17.5
     if n == 1:
         second = 0
@@ -67,6 +83,19 @@ def update():
     if minute >= 144:
         minute -= 144
         hour += 1
+    if hour > 16:
+        change_day()
+        hour -= 17
+    if year % 16 == 0 or count_mes % 2 != 0:
+        if count_day > 41:
+            change_mec()
+            count_day -= 41
+    else:
+        if count_day > 40:
+            change_mec()
+            count_day -= 41
+
+
 
     change_hand(radius - 20, int(second), second_arrow, 0.277)
     change_hand(radius - 40, int(minute), minute_arrow, 2.5)
@@ -78,7 +107,7 @@ def update():
 
     # second += 34.5
     # nowq1 = datetime.datetime.now().microsecond
-    print(hour, minute, int(second))
+    #print(hour, minute, int(second))
     # print(nowq - nowq1)
     root.after(462, update)  # 500
 
@@ -111,6 +140,7 @@ hour = time.hour
 year = time.year
 
 
+
 minute = time.minute
 
 second = time.second
@@ -132,7 +162,11 @@ if hour % 1.5 != 0:
             hour -= 1
             minute += 60# + (hour / 1.5 - int(hour / 1.5)) * 60
 '''
+i = 6
+count_day = 39
+count_mes = 8
 
+firts_year = 2012
 fake_minute = 0
 
 minute *= 1.6
@@ -140,6 +174,10 @@ second *= 34.56
 
 second += (minute - int(minute)) * 1296
 
+year_of_live = year - firts_year
+if year_of_live > 144:
+    year_of_live -= 144
+year_of_let = year_of_live - int(year_of_live//16)*16
 
 
 if second >= 1296:
@@ -152,6 +190,21 @@ if hour < 18:
     hour = hour * (2 / 3) + 4
 else:
     hour = hour * (2 / 3) - 12
+
+hour_text = Label(text="Часы: ", font=('Times',15))
+hour_text.place(x = width-450, y = width - 150)
+minute_text = Label(text="Части: ", font=('Times',15))
+minute_text.place(x = width-350, y = width - 150)
+second_text = Label(text="Доли: ", font=('Times',15))
+second_text.place(x = width-250, y = width - 150)
+day_text = Label(text="День: " + list_dni[8], font=('Times',15))
+day_text.place(x = width-450, y = width - 100)
+mouth_text = Label(text="Сороковник: " + list_mes[7], font=('Times',15))
+mouth_text.place(x = width-300, y = width - 100)
+year_let_text = Label(text="Лето в Круге Лет: " + str(year_of_let), font=('Times',15))
+year_let_text.place(x = width-450, y = width - 50)
+year_life_text = Label(text="Лето в Круге Жизни: " + str(year_of_live), font=('Times',15))
+year_life_text.place(x = width-250, y = width - 50)
 
 # nowq1 = datetime.datetime.now().microsecond
 # print(nowq - nowq1)
